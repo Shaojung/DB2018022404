@@ -27,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 super.run();
-                String str_url = "https://www.google.com.tw";
+                String str_url = "http://rate.bot.com.tw/xrt?Lang=zh-TW";
                 URL url = null;
+                StringBuilder sb = new StringBuilder();
                 String str = "";
                 try {
                     url = new URL(str_url);
@@ -37,7 +38,10 @@ public class MainActivity extends AppCompatActivity {
                     conn.connect();
                     InputStream stream = conn.getInputStream();
                     BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-                    str = br.readLine();
+                    while ((str = br.readLine()) != null)
+                    {
+                        sb.append(str);
+                    }
                     br.close();
                     stream.close();
                 } catch (MalformedURLException e) {
@@ -47,8 +51,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Log.d("Network", str);
-
+                String data = sb.toString();
+                int loc1 = data.indexOf("日圓 (JPY)");
+                int loc2 = data.indexOf("本行現金賣出", loc1);
+                int loc3 = data.indexOf("0.2765", loc2);
+                Log.d("TWD", "loc1:" + loc1 + ", loc2:" + loc2 + ", loc3:" + loc3);
+                String twd = data.substring(loc2+56, loc2+62);
+                Log.d("TWD", "twd:" + twd);
             }
         }.start();
     }
